@@ -23,6 +23,8 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
 for idx, item in enumerate(results['items']):
     track = item['track']
     print(idx, track['artists'][0]['name'], " – ", track['name'])'''
-
+#on récup tous mes titres likés (on va les utiliser pour pas trop avoir des sons biaisés et que
+#le travail de recommandation soit déjà fait. J'ai écouté plusieurs genres durant mes 4 ans sur spotify...
 titres = recupliked(sp)
 print(f" On a {len(titres)} titres récupérés.")
+print(titres[0]['track'])
