@@ -44,25 +44,20 @@ def audiofeatures(sp,titres):
 
 
 def spot_call(func, *args, **kwargs):
-    """
-    Appelle une fonction (ex: sp.search, sp.playlist_items)
-    en gérant automatiquement les erreurs 429 (rate limit)!
-    """
     while True:
         try:
             return func(*args, **kwargs)
 
         except HTTPError as e:
-            # Gestion du rate limit 429
             if e.response is not None and e.response.status_code == 429:
                 retry_after = int(e.response.headers.get("Retry-After", "2"))
-                print(f"[429] Rate limit atteint → attente de {retry_after} sec...")
+                print(f"[429] Rate limit → attente obligatoire : {retry_after} sec")
                 time.sleep(retry_after + 1)
                 continue
             raise
 
         except Exception as e:
-            print("Erreur réseau temporaire, retry dans 0.2s:", e) #ma connexion est instable
+            print("Erreur réseau temporaire, retry dans 0.2s:", e)
             time.sleep(0.2)
             continue
 
@@ -106,13 +101,12 @@ def traiter(res,t):
         if track and track.get('id'):
             t.append(track['id'])
     return
-def trackfromplaylist(sp,p):
+def trackfromplaylist(sp, p):
     tracks = []
-    res = sp.playlist_items(p, limit=100, offset=0)
+    res = spot_call(sp.playlist_items, p, limit=100, offset=0)
     traiter(res, tracks)
-
     while res['next']:
-        res = sp.next(res)
+        res = spot_call(sp.next, res)
         traiter(res, tracks)
 
     return tracks
