@@ -27,24 +27,13 @@ for idx, item in enumerate(results['items']):
 #le travail de recommandation soit déjà fait. J'ai écouté plusieurs genres durant mes 4 ans sur spotify...
 #titres = recupliked(sp)
 #print(f" On a {len(titres)} titres récupérés.")
-queries1 = queries = [
-    "top hits",
-    "global top",
+queries=[    "top hits",
     "popular songs",
     "best of",
     "all time hits",
-    "radio hits",
-    "chart hits",
-    "top songs",
-    "hot 100",
-    "top tracks",
-    "popular playlist",
-    "summer hits",
-    "party",
-    "night club"
-]
-queries=["hits","top 50","charts","popular"]
-playlists=recup_playlists(sp,queries1,max_playlists=10000)
+    "french hits",
+    "rock hits","classic hits","party","summer hits","Rock Classics","Top 50 Global","love songs hits","dance hits","classical hits"]
+playlists=recup_playlists(sp,queries,max_playlists=8000)
 import json
 print(len(playlists))
 with open("playlists_meta.json", "w", encoding="utf-8") as f:

@@ -99,3 +99,21 @@ def recup_playlists(sp,queries,max_playlists=1000):
             time.sleep(0.2)
         print(len(all_playlists))
     return all_playlists 
+
+def traiter(res,t):
+    for item in res['items']:
+        track = item.get('track')
+        if track and track.get('id'):
+            t.append(track['id'])
+    return
+def trackfromplaylist(sp,p):
+    tracks = []
+    res = sp.playlist_items(p, limit=100, offset=0)
+    traiter(res, tracks)
+
+    while res['next']:
+        res = sp.next(res)
+        traiter(res, tracks)
+
+    return tracks
+            
