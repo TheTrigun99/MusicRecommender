@@ -4,28 +4,22 @@ import os
 from recuperinfos import recup_playlists,trackfromplaylist
 import json
 
+import time
+
+from dotenv import load_dotenv
 
 
 def trouversp():
-    scope = "user-library-read"
-    with open(".env") as f:
-        for line in f:
-            if line.strip() and not line.startswith("#"):
-                key, value = line.strip().split("=", 1)
-                os.environ[key] = value
-
-    client_id = os.getenv("SPOTIFY_CLIENT_ID")
-    client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
-    redirect_uri = os.getenv("SPOTIFY_REDIRECT_URI")
-    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
+    load_dotenv()  # charge .env proprement
+    
+    return spotipy.Spotify(auth_manager=SpotifyOAuth(
         client_id=os.getenv("SPOTIFY_CLIENT_ID"),
         client_secret=os.getenv("SPOTIFY_CLIENT_SECRET"),
         redirect_uri=os.getenv("SPOTIFY_REDIRECT_URI"),
-        scope=scope
+        scope="playlist-read-private playlist-read-collaborative"
     ))
-    return sp
 
-def allsongs(fjson):
+'''def allsongs(fjson):
     allsong=[]
     with open(fjson, "r", encoding="utf-8") as f:
         playlists = json.load(f)
@@ -34,31 +28,54 @@ def allsongs(fjson):
         url=i["external_urls"]['spotify']
         allsong.append(trackfromplaylist(sp,url))
         print(url)
-    return allsong
-sp = trouversp()
-print("CLIENT_ID .env =", os.getenv("SPOTIFY_CLIENT_ID"))
-print("REDIRECT_URI .env =", os.getenv("SPOTIFY_REDIRECT_URI"))
-print("CLIENT_ID utilisé par Spotipy =", sp.auth_manager.client_id)
+    return allsong'''
+
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm
-def allsongss(fjson):
+
+def allsongss_final(fjson):
+    sp = trouversp()
+    
+    with open(fjson, "r", encoding="utf-8") as f:
+        playlists = json.load(f)
+    playlists = playlists[:1000]
+    results = []
+    for pl in tqdm(playlists):
+        url = pl["external_urls"]["spotify"]
+        try:
+            res = trackfromplaylist(sp, url)
+            results.append(res)
+        except Exception as e:
+            print("Erreur:", e)
+            time.sleep(2)
+            sp = trouversp()   # recreer client propre en cas d’erreur
+            continue
+
+        time.sleep(1)    # rate limit pour éviter ban
+
+    return results
+
+
+'''def allsongss(fjson):
     with open(fjson, "r", encoding="utf-8") as f:
         playlists = json.load(f)
 
 
     futures = []
-    with ThreadPoolExecutor(max_workers=3) as ex:
+    with ThreadPoolExecutor(max_workers=1) as ex:
+        futures = []
         for pl in playlists:
             url = pl["external_urls"]["spotify"]
             futures.append(ex.submit(trackfromplaylist, sp, url))
+            time.sleep(0.1)   
 
         results = []
         for future in tqdm(as_completed(futures), total=len(futures)):
             results.append(future.result())
 
-    return results
+    return results'''
 
-playlist=allsongss('playlists_meta.json')
+playlist=allsongss_final('playlists_meta.json')
 with open("playlistsasons.jsonl", "w", encoding="utf-8") as f:
     for pl in playlist:
         f.write(json.dumps(pl) + "\n")
