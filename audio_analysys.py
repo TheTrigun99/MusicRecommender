@@ -32,9 +32,14 @@ def audio_features(m):
     n_fft       = 2048        # taille de fenêtre FFT
     hop_length  = 512         # pas entre fenêtres (samples)
     win         = "hann"   
-    y, sr = librosa.load(m, sr=sr_target, mono=True) #load la musique
-    Spectro = np.abs(librosa.stft(y, n_fft=n_fft, hop_length=hop_length, window=win))
-    d['tempo']=librosa.feature.tempo(sr=sr,S=Spectro)
+    y, sr = librosa.load(m, sr=sr_target, mono=True) #load la musique et chope le sample rate de la musique
+    Spectro = np.abs(librosa.stft(y, n_fft=n_fft, hop_length=hop_length, window=win)) #utile car on va économiser beaucoup de calculs avec
+    chr= librosa.feature.chroma_stft(S=Spectro,sr=sr,n_fft=n_fft,hop_length=hop_length,window=win) #chromagramme calculé qu'une fois
+    d['bpm']=librosa.feature.tempo(sr=sr,S=Spectro) #bpm
+    tonnetz=librosa.feature.tonnetz(chroma=chr,sr=sr) #frame by frame 
+    d['tonnetz']= np.mean(tonnetz, axis=1) #on moyenne sur le temps
+    d['energy']=np.mean(librosa.feature.rms(S=Spectro,hop_length=hop_length,frame_length=n_fft))
+
     return d
 
     

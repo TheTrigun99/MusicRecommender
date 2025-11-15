@@ -1,7 +1,7 @@
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 import os
-from recup_titre import recupliked
+from recuperinfos import recup_playlists
 scope = "user-library-read"
 with open(".env") as f:
     for line in f:
@@ -25,6 +25,27 @@ for idx, item in enumerate(results['items']):
     print(idx, track['artists'][0]['name'], " – ", track['name'])'''
 #on récup tous mes titres likés (on va les utiliser pour pas trop avoir des sons biaisés et que
 #le travail de recommandation soit déjà fait. J'ai écouté plusieurs genres durant mes 4 ans sur spotify...
-titres = recupliked(sp)
-print(f" On a {len(titres)} titres récupérés.")
-print(titres[0]['track'])
+#titres = recupliked(sp)
+#print(f" On a {len(titres)} titres récupérés.")
+queries1 = queries = [
+    "top hits",
+    "global top",
+    "popular songs",
+    "best of",
+    "all time hits",
+    "radio hits",
+    "chart hits",
+    "top songs",
+    "hot 100",
+    "top tracks",
+    "popular playlist",
+    "summer hits",
+    "party",
+    "night club"
+]
+queries=["hits","top 50","charts","popular"]
+playlists=recup_playlists(sp,queries1,max_playlists=10000)
+import json
+print(len(playlists))
+with open("playlists_meta.json", "w", encoding="utf-8") as f:
+    json.dump(playlists, f, ensure_ascii=False, indent=2)
