@@ -58,6 +58,7 @@ def gen_couples(p,t2id,wdow):
                 pairs.append((centre,t2id[pl[p2]]))
     return pairs
 
-p=load500('C:\\Users\\damie\Documents\\MusicRecommender\\spotify_dataset.csv')
-track2id, id2track, counts,pl=build_vocab(p,3)
-print(gen_couples(pl,track2id,2))
+if __name__ == "__main__":
+    p = load500('C:\\Users\\damie\\Documents\\MusicRecommender\\spotify_dataset.csv')
+    track2id, id2track, counts, pl = build_vocab(p, 3)
+    print(gen_couples(pl, track2id, 2))
