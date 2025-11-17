@@ -13,20 +13,20 @@ from pathlib import Path
 
 import torch
 
-from .build import build_noise, build_vocab, gen_couples
-from .loading import load500
-from .modele import Item2VecPaper
+from build import build_noise, build_vocab, gen_couples
+from loading import load500
+from modele import Item2VecPaper
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Train Item2VecPaper embeddings on playlist data.")
     parser.add_argument("--data", type=Path, default=Path("spotify_dataset.csv"), help="CSV export containing playlists.")
     parser.add_argument("--output", type=Path, default=Path("item2vec.pt"), help="Where to store embeddings + vocab.")
-    parser.add_argument("--epochs", type=int, default=5, help="Training epochs.")
+    parser.add_argument("--epochs", type=int, default=10, help="Training epochs.")
     parser.add_argument("--batch-size", type=int, default=64, dest="batch_size", help="Training batch size.")
     parser.add_argument("--embedding-dim", type=int, default=128, dest="embedding_dim", help="Embedding size.")
-    parser.add_argument("--window-size", type=int, default=2, dest="window_size", help="Skip-gram window on each side.")
-    parser.add_argument("--negatives", type=int, default=5, help="Negative samples per positive pair.")
+    parser.add_argument("--window-size", type=int, default=5, dest="window_size", help="Skip-gram window on each side.")
+    parser.add_argument("--negatives", type=int, default=20, help="Negative samples per positive pair.")
     parser.add_argument("--min-count", type=int, default=3, dest="min_count", help="Minimum track frequency to keep.")
     parser.add_argument("--lr", type=float, default=0.005, help="Learning rate for Adam.")
     parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu", help="Training device.")

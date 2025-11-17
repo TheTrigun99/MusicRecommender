@@ -1,10 +1,7 @@
 from collections import Counter
 import numpy as np
-
-try:
-    from .loading import load500
-except ImportError:
-    from loading import load500
+from loading import load500
+import torch
 # TODO: description fonction, regarder dataset en détail
 def build_vocab(playlists, min_count=3):
     counter = Counter()
@@ -62,7 +59,22 @@ def gen_couples(p,t2id,wdow):
                 pairs.append((centre,t2id[pl[p2]]))
     return pairs
 
-if __name__ == "__main__":
-    p = load500('C:\\Users\\damie\\Documents\\MusicRecommender\\spotify_dataset.csv')
-    track2id, id2track, counts, pl = build_vocab(p, 3)
-    print(gen_couples(pl, track2id, 2))
+#test#########################################
+
+p=load500('C:\\Users\\damie\Documents\\MusicRecommender\\spotify_dataset.csv')
+track2id, id2track, counts,pl=build_vocab(p,3)
+
+
+def negatifs(btch_size, num_neg, noise):
+    noise_tensor = torch.tensor(noise, dtype=torch.float32)
+
+    aneg = []
+    for _ in range(btch_size): 
+        neg = torch.multinomial(
+            noise_tensor,
+            num_samples=num_neg,
+            replacement=True)
+        aneg.append(neg)
+
+    neg_matrix = torch.stack(aneg, dim=0)
+    return neg_matrix
