@@ -1,6 +1,10 @@
 from collections import Counter
 import numpy as np
-from loading import load500
+
+try:
+    from .loading import load500
+except ImportError:
+    from loading import load500
 # TODO: description fonction, regarder dataset en détail
 def build_vocab(playlists, min_count=3):
     counter = Counter()
