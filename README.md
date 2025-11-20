@@ -1,6 +1,6 @@
 # MusicRecommender
 
-Pipeline de recommandation musicale construit autour des API Spotify et d’un entraînement *Item2Vec* minimaliste. Le projet collecte des playlists publiques, récupère l’ensemble des morceaux associés, puis apprend des embeddings qui servent à trouver des titres similaires.
+Pipeline de recommandation musicale construit autour des API Spotify et d’un entraînement *Item2Vec* minimaliste. Le projet collecte des playlists publiques, récupère l’ensemble des morceaux associés, puis apprend des embeddings qui servent à trouver des titres similaires. Utilisation de collaborative filtering avec des playlists publiques pour s'approcher du modèle réel.
 
 ## Fonctionnalités clés
 - **Collecte Spotify** : recherche de milliers de playlists publiques via Spotipy et gestion du *rate limiting* (`extraction.py`, `recuperinfos.py`).
